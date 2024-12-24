@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 10
+
+struct Minstack {
+    int stack[MAX];
+    int min_stack[MAX];
+    int top;
+};
+
+void initstack(struct Minstack* minstack) {
+    minstack->top = -1;
+}
+
+int isFull(struct Minstack* minstack) {
+    return minstack->top == MAX - 1;
+}
+
+int isEmpty(struct Minstack* minstack) {
+    return minstack->top == -1;
+}
+
+void push(struct Minstack* minstack, int value) {
+    if (isFull(minstack)) {
+        printf("Overflow: Stack is full!\n");
+        return;
+    }
+
+    minstack->top++;
+    minstack->stack[minstack->top] = value;
+
+    
+    if (minstack->top == 0) {
+        minstack->min_stack[minstack->top] = value;
+    } else {
+        int current_min = minstack->min_stack[minstack->top - 1];
+        minstack->min_stack[minstack->top] = (value < current_min) ? value : current_min;
+    }
+}
+
+int pop(struct Minstack* minstack) {
+    if (isEmpty(minstack)) {
+        printf("Underflow: Stack is empty!\n");
+        return -1;
+    }
+
+    int popped_value = minstack->stack[minstack->top];
+    minstack->top--;
+    return popped_value;
+}
+
+int getMin(struct Minstack* minstack) {
+    if (isEmpty(minstack)) {
+        printf("Stack is empty\n");
+        return -1;
+    }
+
+    return minstack->min_stack[minstack->top];
+}
+
+
+int top(struct Minstack* minstack) {
+    if (isEmpty(minstack)) {
+        printf("Stack is empty\n");
+        return -1;
+    }
+
+    return minstack->stack[minstack->top];
+}
+
+
+void display(struct Minstack* minstack) {
+    if (isEmpty(minstack)) {
+        printf("Stack is empty\n");
+        return;
+    }
+
+    printf("Stack elements (from top to bottom):\n");
+    for (int i = minstack->top; i >= 0; i--) {
+        printf("%d ", minstack->stack[i]);
+    }
+    printf("\n");
+}
+
+void displayMenu() {
+    printf("\nSelect an operation:\n");
+    printf("1. Push\n");
+    printf("2. Pop\n");
+    printf("3. Get Minimum\n");
+    printf("4. Get Top Element\n");
+    printf("5. Display Stack\n");
+    printf("6. Exit\n");
+}
+
+int main() {
+    struct Minstack minstack;
+    initstack(&minstack);
+    int choice, value;
+
+    while (1) {
+        displayMenu();
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                
+                printf("Enter the value to push: ");
+                scanf("%d", &value);
+                push(&minstack, value);
+                break;
+            case 2:
+                
+                value = pop(&minstack);
+                if (value != -1) {
+                    printf("Popped value: %d\n", value);
+                }
+                break;
+            case 3:
+                
+                value = getMin(&minstack);
+                if (value != -1) {
+                    printf("Current minimum: %d\n", value);
+                }
+                break;
+            case 4:
+                
+                value = top(&minstack);
+                if (value != -1) {
+                    printf("Top element: %d\n", value);
+                }
+                break;
+            case 5:
+                
+                display(&minstack);
+                break;
+            case 6:
+                
+                printf("Exiting...\n");
+                return 0;
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    }
+
+    return 0;
+}
